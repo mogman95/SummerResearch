@@ -8,11 +8,11 @@ root = tk.Tk()
 root.withdraw()
 file_path = filedialog.askopenfilename()
 
-record_iterator = SeqIO.parse(path, "fasta")
+record_iterator = SeqIO.parse(file_path, "fasta")
 first_record = next(record_iterator)
 print(first_record,"\n")
 
-for seq_rec in SeqIO.parse(path, "fasta"):
+for seq_rec in SeqIO.parse(file_path, "fasta"):
     seq = seq_rec.seq
     l = len(seq)
     if l < 50000:
