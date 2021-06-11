@@ -107,4 +107,4 @@ GTp = GT/dinuc_count
 GCp = GC/dinuc_count
 GGp = GG/dinuc_count
 print(f"\nDinucleotide Frequency:\nAA: {AAp}\nAT: {ATp}\nAC: {ACp}\nAG: {AGp}\nTA: {TAp}\nTT: {TTp}\nTC: {TCp}\nTG: {TGp}\nCA: {CAp}\nCT: {CTp}\nCC: {CCp}\nCG: {CGp}\nGA: {GAp}\nGT: {GTp}\nGC: {GCp}\nGG: {GGp}")
-input("\n\nPress 'enter' to exit")
+input("\n\nPress 'enter' to exit\n->")
