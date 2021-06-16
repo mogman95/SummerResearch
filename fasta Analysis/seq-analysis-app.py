@@ -104,11 +104,8 @@ rev_comp = rev(comp(ref_seq))                                            # Rever
 toc = time.perf_counter() # Stop timer
 
 """ Output results to a TXT file """
-
-"""Initialize variables """
+### Initialize output file name
 output_file = "analysis.txt"
-
-""" Write to output TXT file """
 with open(output_file,'w+') as f: # Open a new file, or override and old file, that can be written to as 'f'
     f.write("GC Content:\n" + str(GC_cont*100) + " %\n")
     f.write("\nNucleotide Frequencies:\n")
