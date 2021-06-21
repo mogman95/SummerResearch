@@ -113,13 +113,30 @@ for record in records:                  # For each chromosome/scaffold/contig in
     seq = seq.upper()                   # Makes sure sequence is uppercase so each charater is counted correctly
     ref_seq += seq                      # Stitches seperate sequences together into one
 
-GC_cont = (nuc_count("G",ref_seq) + nuc_count("C",ref_seq))/len(ref_seq) # Add the number of Gs and Cs in the sequence and divide by the length of the sequence
-nuc_dict = nuc_freq(ref_seq)                                             # Get nucleotide freqs
-dinuc_dict = dinuc_freq(ref_seq)                                         # Get dinucleotide freqs
+# GC_cont = (nuc_count("G",ref_seq) + nuc_count("C",ref_seq))/len(ref_seq) # Add the number of Gs and Cs in the sequence and divide by the length of the sequence
+# nuc_dict = nuc_freq(ref_seq)                                             # Get nucleotide freqs
+# dinuc_dict = dinuc_freq(ref_seq)                                         # Get dinucleotide freqs
 comp_seq = comp(ref_seq)                                                 # Get the complement of the sequence (3' to 5' if the sequence is 5' to 3')
 rev_comp = rev(comp(ref_seq))                                            # Reverse the complementary sequence (to 5' to 3' from 3' to 5' or vice versa)
-toc = time.perf_counter() # Stop timer
+def GC_cont():
+    GC_cont = str((nuc_count("G", ref_seq) + nuc_count("C", ref_seq)) / len(ref_seq)*100)
+    return GC_cont + "\n"
 
+def nuc_results():
+    nuc_dict = nuc_freq(ref_seq)
+    results = ""
+    for nuc in nuc_dict:  # Print each nucleotide and its corresponding frequency value
+        results += nuc + ": " + str(nuc_dict[nuc]) + "\n"
+    return results
+
+def dinuc_results():
+    dinuc_dict = dinuc_freq(ref_seq)
+    results = ""
+    for nuc in dinuc_dict:  # Print each nucleotide and its corresponding frequency value
+        results += nuc + ": " + str(dinuc_dict[nuc]) + "\n"
+    return results
+
+toc = time.perf_counter() # Stop timer
 """ Output results to a TXT file """
 # ### Initialize output file name
 # output_file = "analysis.txt"
@@ -156,57 +173,50 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("My App")
+        self.setWindowTitle("Sequence Analysis")
+        self.resize(1000,1000)
         self.window1 = AnotherWindow()
         self.window1.button.clicked.connect(self.toggle_window1)
-        button_action = QAction("Save", self)
-        button_action.triggered.connect(self.onMyToolBarButtonClick)
 
-        button_action2 = QAction("Save as...", self)
-        button_action2.triggered.connect(self.onMyToolBarButtonClick)
-
-        # self.setStatusBar(QStatusBar(self))
         menu = self.menuBar()
-        file_menu = menu.addMenu("&File")
-        file_menu.addAction(button_action)
-        file_menu.addAction(button_action2)
 
-        edit_action = QAction('Analyze', self)
-        edit_action.triggered.connect(self.onMyToolBarButtonClick)
-        file_menu2 = menu.addMenu('edit')
-        file_menu2.addAction(edit_action)
+        save_comp_analysis = QAction("Save Complete Analysis", self)
+        save_comp_analysis.triggered.connect(self.save_comp_analysis)
+        save = QAction("Save", self)
+        save.triggered.connect(self.save_comp_analysis)
+        save_as = QAction("Save as...", self)
+        save_as.triggered.connect(self.save_comp_analysis)
+        # self.setStatusBar(QStatusBar(self))
+        file_menu = menu.addMenu("&File")
+        file_menu.addAction(save_comp_analysis)
+        file_menu.addAction(save)
+        file_menu.addAction(save_as)
+
+        newana_action = QAction('New Analysis', self)
+        newana_action.triggered.connect(self.save_comp_analysis)
+        editana_action = QAction('Edit Analysis', self)
+        editana_action.triggered.connect(self.save_comp_analysis)
+        analysis_menu = menu.addMenu('&Analysis')
+        analysis_menu.addAction(newana_action)
+        analysis_menu.addAction(editana_action)
+
+        tutorial_action = QAction('Tutorial', self)
+        tutorial_action.triggered.connect(self.save_comp_analysis)
+        help_menu = menu.addMenu('&Help')
+        help_menu.addAction(tutorial_action)
 
         l = QVBoxLayout()
         self.text = QTextEdit()
-        self.text.setText("GC Content:\n" + str(GC_cont*100) + " %\n"
-                        # "\nNucleotide Frequencies:\n",
-                        # for nuc in nuc_dict: # Print each nucleotide and its corresponding frequency value
-                        #     nuc + ": " + str(nuc_dict[nuc]) + "\n",
-                        # "\nDinucleotide Frequencies:\n",
-                        # for dinuc in dinuc_dict: # Print each dinucleotide and its corresponding frequency value
-                        #     dinuc + ": " + str(dinuc_dict[dinuc]) + "\n",
-                        +"\nSequence:\n" + ref_seq
-                        +"\n\nComplement:\n" + comp_seq
-                        +"\n\nReverse Complement:\n" + rev_comp
-                        +"\nCode executed in %0.4f seconds" % (toc-tic)
+        self.text.setText("GC Content:\n" + GC_cont()
+                        + "\nNucleotide Frequencies:\n" + nuc_results()
+                        + "\nNucleotide Frequencies:\n" + dinuc_results()
+                        + "\nSequence:\n" + ref_seq
+                        + "\n\nComplement:\n" + comp_seq
+                        + "\n\nReverse Complement:\n" + rev_comp
+                        + "\nCode executed in %0.4f seconds" % (toc-tic)
                                                )
         self.text.setDisabled(False)
         l.addWidget(self.text)
-        # self.label = QLabel()
-        # self.label.setText("GC Content:\n" + str(GC_cont*100) + " %\n"
-        #                 # "\nNucleotide Frequencies:\n",
-        #                 # for nuc in nuc_dict: # Print each nucleotide and its corresponding frequency value
-        #                 #     nuc + ": " + str(nuc_dict[nuc]) + "\n",
-        #                 # "\nDinucleotide Frequencies:\n",
-        #                 # for dinuc in dinuc_dict: # Print each dinucleotide and its corresponding frequency value
-        #                 #     dinuc + ": " + str(dinuc_dict[dinuc]) + "\n",
-        #                 +"\nSequence:\n" + ref_seq
-        #                 +"\n\nComplement:\n" + comp_seq
-        #                 +"\n\nReverse Complement:\n" + rev_comp
-        #                 +"\nCode executed in %0.4f seconds" % (toc-tic)
-        #                                        )
-        # l.addWidget(self.label)
-
 
         w = QWidget()
         w.setLayout(l)
@@ -219,9 +229,17 @@ class MainWindow(QMainWindow):
         else:
             self.window1.show()
 
-    def onMyToolBarButtonClick(self):
-        print("click")
-        self.window1.show()
+    def save_comp_analysis(self):
+        output_file = "analysis.txt"
+        with open(output_file,'w+') as f: # Open a new file, or override and old file, that can be written to as 'f'
+            f.write("GC Content:\n" + GC_cont())
+            f.write("\nNucleotide Frequencies:\n" + nuc_results())
+            f.write("\nDinucleotide Frequencies:\n" + dinuc_results())
+            f.write("\nSequence:\n" + ref_seq)
+            f.write("\n\nComplement:\n" + comp_seq)
+            f.write("\n\nReverse Complement:\n" + rev_comp)
+            f.write("\nCode executed in %0.4f seconds" % (toc-tic))
+        f.close()
 
 app = QApplication(sys.argv)
 
