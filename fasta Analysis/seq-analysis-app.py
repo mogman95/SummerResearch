@@ -2,6 +2,23 @@
 from Bio import SeqIO
 from Bio.Seq import Seq
 import time
+import sys
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtWidgets import (
+    QApplication,
+    QLabel,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QAction,
+    QCheckBox,
+    QMainWindow,
+    QStatusBar,
+    QToolBar,
+    QTextEdit,
+)
+from PyQt5.QtGui import QIcon
 
 """Define Functions"""
 '''Complement Function:'''
@@ -104,18 +121,111 @@ rev_comp = rev(comp(ref_seq))                                            # Rever
 toc = time.perf_counter() # Stop timer
 
 """ Output results to a TXT file """
-### Initialize output file name
-output_file = "analysis.txt"
-with open(output_file,'w+') as f: # Open a new file, or override and old file, that can be written to as 'f'
-    f.write("GC Content:\n" + str(GC_cont*100) + " %\n")
-    f.write("\nNucleotide Frequencies:\n")
-    for nuc in nuc_dict: # Print each nucleotide and its corresponding frequency value
-        f.write(nuc + ": " + str(nuc_dict[nuc]) + "\n")
-    f.write("\nDinucleotide Frequencies:\n")
-    for dinuc in dinuc_dict: # Print each dinucleotide and its corresponding frequency value
-        f.write(dinuc + ": " + str(dinuc_dict[dinuc]) + "\n")
-    f.write("\nSequence:\n" + ref_seq)
-    f.write("\n\nComplement:\n" + comp_seq)
-    f.write("\n\nReverse Complement:\n" + rev_comp)
-    f.write("\nCode executed in %0.4f seconds" % (toc-tic))
-f.close()
+# ### Initialize output file name
+# output_file = "analysis.txt"
+# with open(output_file,'w+') as f: # Open a new file, or override and old file, that can be written to as 'f'
+#     f.write("GC Content:\n" + str(GC_cont*100) + " %\n")
+#     f.write("\nNucleotide Frequencies:\n")
+#     for nuc in nuc_dict: # Print each nucleotide and its corresponding frequency value
+#         f.write(nuc + ": " + str(nuc_dict[nuc]) + "\n")
+#     f.write("\nDinucleotide Frequencies:\n")
+#     for dinuc in dinuc_dict: # Print each dinucleotide and its corresponding frequency value
+#         f.write(dinuc + ": " + str(dinuc_dict[dinuc]) + "\n")
+#     f.write("\nSequence:\n" + ref_seq)
+#     f.write("\n\nComplement:\n" + comp_seq)
+#     f.write("\n\nReverse Complement:\n" + rev_comp)
+#     f.write("\nCode executed in %0.4f seconds" % (toc-tic))
+# f.close()
+
+
+class AnotherWindow(QWidget):
+    """
+    This "window" is a QWidget. If it has no parent,
+    it will appear as a free-floating window.
+    """
+
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        self.button = QPushButton('close')
+        layout.addWidget(self.button)
+        self.setFixedSize(QSize(500,300))
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("My App")
+        self.window1 = AnotherWindow()
+        self.window1.button.clicked.connect(self.toggle_window1)
+        button_action = QAction("Save", self)
+        button_action.triggered.connect(self.onMyToolBarButtonClick)
+
+        button_action2 = QAction("Save as...", self)
+        button_action2.triggered.connect(self.onMyToolBarButtonClick)
+
+        # self.setStatusBar(QStatusBar(self))
+        menu = self.menuBar()
+        file_menu = menu.addMenu("&File")
+        file_menu.addAction(button_action)
+        file_menu.addAction(button_action2)
+
+        edit_action = QAction('Analyze', self)
+        edit_action.triggered.connect(self.onMyToolBarButtonClick)
+        file_menu2 = menu.addMenu('edit')
+        file_menu2.addAction(edit_action)
+
+        l = QVBoxLayout()
+        self.text = QTextEdit()
+        self.text.setText("GC Content:\n" + str(GC_cont*100) + " %\n"
+                        # "\nNucleotide Frequencies:\n",
+                        # for nuc in nuc_dict: # Print each nucleotide and its corresponding frequency value
+                        #     nuc + ": " + str(nuc_dict[nuc]) + "\n",
+                        # "\nDinucleotide Frequencies:\n",
+                        # for dinuc in dinuc_dict: # Print each dinucleotide and its corresponding frequency value
+                        #     dinuc + ": " + str(dinuc_dict[dinuc]) + "\n",
+                        +"\nSequence:\n" + ref_seq
+                        +"\n\nComplement:\n" + comp_seq
+                        +"\n\nReverse Complement:\n" + rev_comp
+                        +"\nCode executed in %0.4f seconds" % (toc-tic)
+                                               )
+        self.text.setDisabled(False)
+        l.addWidget(self.text)
+        # self.label = QLabel()
+        # self.label.setText("GC Content:\n" + str(GC_cont*100) + " %\n"
+        #                 # "\nNucleotide Frequencies:\n",
+        #                 # for nuc in nuc_dict: # Print each nucleotide and its corresponding frequency value
+        #                 #     nuc + ": " + str(nuc_dict[nuc]) + "\n",
+        #                 # "\nDinucleotide Frequencies:\n",
+        #                 # for dinuc in dinuc_dict: # Print each dinucleotide and its corresponding frequency value
+        #                 #     dinuc + ": " + str(dinuc_dict[dinuc]) + "\n",
+        #                 +"\nSequence:\n" + ref_seq
+        #                 +"\n\nComplement:\n" + comp_seq
+        #                 +"\n\nReverse Complement:\n" + rev_comp
+        #                 +"\nCode executed in %0.4f seconds" % (toc-tic)
+        #                                        )
+        # l.addWidget(self.label)
+
+
+        w = QWidget()
+        w.setLayout(l)
+        self.setCentralWidget(w)
+
+    def toggle_window1(self, checked):
+        if self.window1.isVisible():
+            self.window1.hide()
+
+        else:
+            self.window1.show()
+
+    def onMyToolBarButtonClick(self):
+        print("click")
+        self.window1.show()
+
+app = QApplication(sys.argv)
+
+window = MainWindow()
+window.show()
+
+app.exec()
