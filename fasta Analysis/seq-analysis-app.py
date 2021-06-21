@@ -116,25 +116,34 @@ for record in records:                  # For each chromosome/scaffold/contig in
 # GC_cont = (nuc_count("G",ref_seq) + nuc_count("C",ref_seq))/len(ref_seq) # Add the number of Gs and Cs in the sequence and divide by the length of the sequence
 # nuc_dict = nuc_freq(ref_seq)                                             # Get nucleotide freqs
 # dinuc_dict = dinuc_freq(ref_seq)                                         # Get dinucleotide freqs
-comp_seq = comp(ref_seq)                                                 # Get the complement of the sequence (3' to 5' if the sequence is 5' to 3')
-rev_comp = rev(comp(ref_seq))                                            # Reverse the complementary sequence (to 5' to 3' from 3' to 5' or vice versa)
+# comp_seq = comp(ref_seq)                                                 # Get the complement of the sequence (3' to 5' if the sequence is 5' to 3')
+# rev_comp = rev(comp(ref_seq))    # Reverse the complementary sequence (to 5' to 3' from 3' to 5' or vice versa)
+# def ref_seq():
+#     return "\n\nSequence:\n" + ref_seq
+
+def comp_seq():
+    return "\n\nComplement:\n" + comp(ref_seq)
+
+def rev_comp():
+    return "\n\nReverse Complement:\n" + rev(comp(ref_seq))
+
 def GC_cont():
     GC_cont = str((nuc_count("G", ref_seq) + nuc_count("C", ref_seq)) / len(ref_seq)*100)
-    return GC_cont + "\n"
+    return "GC Content:\n" + GC_cont + "\n"
 
 def nuc_results():
     nuc_dict = nuc_freq(ref_seq)
     results = ""
     for nuc in nuc_dict:  # Print each nucleotide and its corresponding frequency value
         results += nuc + ": " + str(nuc_dict[nuc]) + "\n"
-    return results
+    return "\nNucleotide Frequencies:\n" + results
 
 def dinuc_results():
     dinuc_dict = dinuc_freq(ref_seq)
     results = ""
     for nuc in dinuc_dict:  # Print each nucleotide and its corresponding frequency value
         results += nuc + ": " + str(dinuc_dict[nuc]) + "\n"
-    return results
+    return "\nDinucleotide Frequencies:\n" + results
 
 toc = time.perf_counter() # Stop timer
 """ Output results to a TXT file """
@@ -205,21 +214,21 @@ class MainWindow(QMainWindow):
         help_menu = menu.addMenu('&Help')
         help_menu.addAction(tutorial_action)
 
-        l = QVBoxLayout()
+        layout = QVBoxLayout()
         self.text = QTextEdit()
-        self.text.setText("GC Content:\n" + GC_cont()
-                        + "\nNucleotide Frequencies:\n" + nuc_results()
-                        + "\nNucleotide Frequencies:\n" + dinuc_results()
-                        + "\nSequence:\n" + ref_seq
-                        + "\n\nComplement:\n" + comp_seq
-                        + "\n\nReverse Complement:\n" + rev_comp
+        self.text.setText(GC_cont()
+                        + nuc_results()
+                        + dinuc_results()
+                        + ref_seq
+                        + comp_seq()
+                        + rev_comp()
                         + "\nCode executed in %0.4f seconds" % (toc-tic)
                                                )
         self.text.setDisabled(False)
-        l.addWidget(self.text)
+        layout.addWidget(self.text)
 
         w = QWidget()
-        w.setLayout(l)
+        w.setLayout(layout)
         self.setCentralWidget(w)
 
     def toggle_window1(self, checked):
