@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
-    <height>896</height>
+    <width>585</width>
+    <height>493</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -67,9 +67,6 @@
       </property>
       <property name="text">
        <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap resource="logo_test.qrc">:/newPrefix/Analyseq-logo.png</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
@@ -168,8 +165,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>685</width>
-     <height>22</height>
+     <width>585</width>
+     <height>24</height>
     </rect>
    </property>
   </widget>
