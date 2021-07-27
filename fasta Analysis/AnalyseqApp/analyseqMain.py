@@ -53,15 +53,15 @@ class seqAnalysisWindow(QtWidgets.QMainWindow):    ### Window that presents the 
 
     ### Presents the section, or whole, of the sequence to the seq. text browser
     def seq_(self, sequence_):
-        self.seq_analysis_txtbrwsr.setText(sequence_[self.start - 1: self.end]) # Set the text browser text to what ever section of the sequence is specified by the start and end inputs
+        self.seq_analysis_txtbrwsr.setText(sequence_[self.start - 1 : self.end]) # Set the text browser text to what ever section of the sequence is specified by the start and end inputs
 
     ### Presents the section, or whole, of the complement to the seq. text browser
     def comp_(self, comp_seq_):
-        self.seq_analysis_txtbrwsr.setText(comp_seq_[self.start - 1: self.end])
+        self.seq_analysis_txtbrwsr.setText(comp_seq_[self.start - 1 : self.end])
 
     ### Presents the section, or whole, of the reverse complement to the seq. text browser
-    def rev_comp_(self, rev_comp_):
-        self.seq_analysis_txtbrwsr.setText(rev_comp_[self.start - 1: self.end])
+    def rev_comp_(self, rev_comp_, length_):
+        self.seq_analysis_txtbrwsr.setText(rev_comp_[int(length_) - self.end : int(length_) - (self.start-1)])
 
     ### Checks which of the radio btns are selected and presents the appropriate sequence
     def checked_show(self, length_, sequence_, comp_seq_, rev_comp_):
@@ -74,7 +74,7 @@ class seqAnalysisWindow(QtWidgets.QMainWindow):    ### Window that presents the 
             elif self.comp_radiobtn.isChecked():
                 self.comp_(comp_seq_)
             elif self.rev_comp_radiobtn.isChecked():
-                self.rev_comp_(rev_comp_)
+                self.rev_comp_(rev_comp_, length_)
         except:
             self.nuc_show_error()
 
@@ -175,7 +175,7 @@ class analyseqMain(QtWidgets.QMainWindow):
 
                 self.AnalysisWindow.seq_radiobtn.toggled.connect(lambda *args: self.AnalysisWindow.seq_(sequence))           # Show the sequence when the sequence radio btn is selected
                 self.AnalysisWindow.comp_radiobtn.toggled.connect(lambda *args: self.AnalysisWindow.comp_(comp_seq))         # Show the complement when the complement radio btn is selected
-                self.AnalysisWindow.rev_comp_radiobtn.toggled.connect(lambda *args: self.AnalysisWindow.rev_comp_(rev_comp)) # Show the reverse complement when the reverse complement radio btn is selected
+                self.AnalysisWindow.rev_comp_radiobtn.toggled.connect(lambda *args: self.AnalysisWindow.rev_comp_(rev_comp, length)) # Show the reverse complement when the reverse complement radio btn is selected
 
                 self.AnalysisWindow.actionNew.triggered.connect(lambda *args: self.new_analysis()) # Presents a blank main window when the 'New analysis' tab is pressed
                 self.AnalysisWindow.actionsave.triggered.connect(lambda *args: self.Save_(length, GC_cont, nuc_results, dinuc_results, sequence, comp_seq, rev_comp))      # Saves a txt file of all of the analyses when the 'Save' tab is pressed
